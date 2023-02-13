@@ -33,6 +33,7 @@ class AuthRepository implements AuthRepositoryInterface
             'password' =>  Hash::make($request->password)
         ]);
 
+
         return new AuthResource($user);
     }
 
@@ -49,11 +50,12 @@ class AuthRepository implements AuthRepositoryInterface
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken('token')->plainTextToken;
-            return $token;
+            $cookie = cookie('cookie_token', $token, 60 * 24);
+
+            return response(["token" => $token], Response::HTTP_OK)->withoutCookie($cookie);
         } else {
             return response(["message" => "Credenciales invalidas"], Response::HTTP_UNAUTHORIZED);
         }

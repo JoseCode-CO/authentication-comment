@@ -31,7 +31,9 @@ class AuthController extends Controller
             $user = $this->authRepository->register($request);
             return  response($user, Response::HTTP_CREATED);
         } catch (\Exception $ex) {
-            return  response(["message" => "Algo salio mal al registrar el usuario"]);
+            return  response([
+                "message" => "Algo salio mal al registrar el usuario", "error" => $ex->getMessage(), "line" => $ex->getCode()
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -46,9 +48,8 @@ class AuthController extends Controller
     {
         try {
             $sesion = $this->authRepository->login($request);
-            $cookie = cookie('cookie_token', $sesion, 60 * 24);
+            return response(["token" => $sesion], Response::HTTP_OK);
 
-            return response(["token" => $sesion], Response::HTTP_OK)->withoutCookie($cookie);
         } catch (\Exception $ex) {
             return  response(["message" => "Algo salio mal al registrar el usuario"] . $ex->getMessage() . ' linea ' . $ex->getCode());
         }
