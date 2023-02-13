@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -50,11 +51,18 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function logout()
+    public function userProfile()
     {
+        return response()->json([
+            "message" => "userProfile Ok",
+            "userData" => auth()->user()
+        ], Response::HTTP_OK);
     }
 
-    public function allUsers()
+    public function logout(Request $request)
     {
+        //$cookie = Cookie::forget('cookie_token');
+        $request->user()->currentAccessToken()->delete();
+        return response(["message" => "Cierre de sesión"], Response::HTTP_OK);
     }
 }
