@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Repositories\AuthRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -12,43 +13,45 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    private $authRepository;
+
+    function __construct(AuthRepository $authRepository)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed'
-        ]);
-
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-
-        $user->save();
-
-        return response($user, Response::HTTP_CREATED);
+        $this->authRepository = $authRepository;
     }
 
+    /**
+     * It creates a new user.
+     *
+     * @param Request request The request object.
+     */
+    public function register(Request $request)
+    {
+        try {
+            $user = $this->authRepository->register($request);
+            return  response($user, Response::HTTP_CREATED);
+        } catch (\Exception $ex) {
+            return  response(["message" => "Algo salio mal al registrar el usuario"]);
+        }
+    }
+
+    /**
+     * A function that allows you to authenticate a user.
+     *
+     * @param Request request The request object.
+     *
+     * @return The token is being returned.
+     */
     public function authenticate(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        try {
+            $sesion = $this->authRepository->login($request);
+            $cookie = cookie('cookie_token', $sesion, 60 * 24);
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('token')->plainTextToken;
-            $cookie = cookie('cookie_token', $token, 60 * 24);
-            return response(["token" => $token], Response::HTTP_OK)->withoutCookie($cookie);
-        } else {
-            return response(["message" => "Credenciales invalidas"], Response::HTTP_UNAUTHORIZED);
+            return response(["token" => $sesion], Response::HTTP_OK)->withoutCookie($cookie);
+        } catch (\Exception $ex) {
+            return  response(["message" => "Algo salio mal al registrar el usuario"] . $ex->getMessage() . ' linea ' . $ex->getCode());
         }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
     }
 
     public function userProfile()
@@ -62,7 +65,12 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         //$cookie = Cookie::forget('cookie_token');
-        $request->user()->currentAccessToken()->delete();
-        return response(["message" => "Cierre de sesión"], Response::HTTP_OK);
+
+        try {
+            $user = $this->authRepository->logout($request);
+            return  response(["message" => "Cierre de sesión"], Response::HTTP_OK);
+        } catch (\Exception $ex) {
+            return  response(["message" => "Algo salio mal al registrar el usuario"]  . $ex->getMessage() . ' linea ' . $ex->getCode());
+        }
     }
 }
