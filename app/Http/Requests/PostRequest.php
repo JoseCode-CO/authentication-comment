@@ -30,6 +30,11 @@ class PostRequest extends FormRequest
         ];
     }
 
+    /**
+     * It returns an array of messages that will be used to display validation errors
+     *
+     * @return The messages() method returns an array of custom error messages.
+     */
     public function messages()
     {
         return [

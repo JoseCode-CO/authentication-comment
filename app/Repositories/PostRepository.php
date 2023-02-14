@@ -13,7 +13,10 @@ class PostRepository implements PostRepositoryInterface
 
     public function getAll()
     {
-        return Post::with('messages', 'messages.attachments')->get();
+        //return Post::with('messages', 'messages.attachments')->get();
+        return Post::with(['messages' => function ($query) {
+            $query->orderByDesc('created_at')->with('attachments');
+        }])->orderByDesc('created_at')->paginate(15);
     }
 
     public function findById($id)

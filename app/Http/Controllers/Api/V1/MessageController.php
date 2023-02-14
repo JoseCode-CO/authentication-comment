@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MessageRequest;
 use App\Repositories\MessageRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -39,7 +40,7 @@ class MessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(MessageRequest $request)
     {
         try {
             $post = $this->messageRepository->create($request);
@@ -76,7 +77,7 @@ class MessageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(MessageRequest $request, $id)
     {
         $attributes = $request->validated();
         try {
