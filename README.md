@@ -42,7 +42,8 @@
 	"sender_id": 2,    
 	"receiver_id":1,   
 	"post_id" :2,    
-	"message" : "Yakelin",  	
+	"message" : "Hola",
+    
 	"attachments": "test.mp3"  (DEBE SER TIPO ARCHIVO, UNA FOTO O UN AUDIO), SI NO SE MANDA DE IGUAL CREA EL COMENTARIO
 }
 
