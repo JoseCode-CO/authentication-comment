@@ -23,4 +23,9 @@ class Post extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'id');
+    }
 }

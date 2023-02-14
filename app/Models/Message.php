@@ -20,11 +20,23 @@ class Message extends Model
 
     public $timestamps = true;
 
-    public function post(){
+    public function post()
+    {
         return $this->belongsTo(Post::class, 'post_id');
     }
 
-    public function attachments(){
+    public function attachments()
+    {
         return $this->hasMany(Attachment::class, 'id');
+    }
+
+    public function senderUser()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    public function receiverUser()
+    {
+        return $this->belongsTo(User::class, 'receiver_id');
     }
 }

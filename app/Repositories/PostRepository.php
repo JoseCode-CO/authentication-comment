@@ -13,9 +13,9 @@ class PostRepository implements PostRepositoryInterface
 
     public function getAll()
     {
-        //return Post::with('messages', 'messages.attachments')->get();
-        return Post::with(['messages' => function ($query) {
-            $query->orderByDesc('created_at')->with('attachments');
+        //return Post::with('messages', 'messages.attachments', 'createdBy')->get();
+        return Post::with(['createdBy', 'messages' => function ($query) {
+            $query->orderByDesc('created_at')->with('attachments', 'senderUser', 'receiverUser');
         }])->orderByDesc('created_at')->paginate(15);
     }
 

@@ -71,26 +71,6 @@ class MessageController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(MessageRequest $request, $id)
-    {
-        $attributes = $request->validated();
-        try {
-            $post = $this->messageRepository->update($attributes, $id);
-            return response(["post" => $post], Response::HTTP_OK);
-        } catch (\Exception $ex) {
-            return  response([
-                "message" => "Algo salio mal al listar el Mensaje", "error" => $ex->getMessage(), "line" => $ex->getCode()
-            ], Response::HTTP_BAD_REQUEST);
-        }
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id

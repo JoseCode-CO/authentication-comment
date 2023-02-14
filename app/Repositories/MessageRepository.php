@@ -2,21 +2,22 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\MessageRepositoryInterface;
 use App\Models\Attachment;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 
-class MessageRepository
+class MessageRepository implements MessageRepositoryInterface
 {
     public function getAll()
     {
-        return Message::with('post', 'attachments')->get();
+        return Message::with('post', 'senderUser', 'receiverUser', 'attachments')->get();
     }
 
     public function findById($id)
     {
-        return Message::with('post', 'attachments')->findOrFail($id);
+        return Message::with('post', 'senderUser', 'receiverUser', 'attachments')->findOrFail($id);
     }
 
     public function create($request)
@@ -37,37 +38,8 @@ class MessageRepository
                 'path' => $path,
                 'type' => 1
             ]);
-
         }
 
         return $message;
-    }
-
-    public function update($data, $id)
-    {
-        $post = Message::findOrfail($id);
-
-        if ($post->created_by != Auth::id()) {
-            return  response([
-                "message" => "No tiene permisos para editar este registro"
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $post->update($data);
-        return $post;
-    }
-
-    public function delete($id)
-    {
-        $post = Message::findOrfail($id);
-
-        if ($post->created_by != Auth::id()) {
-            return  response([
-                "message" => "No tiene permisos para eliminar este registro"
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $post->delete();
-        return $post;
     }
 }
