@@ -6,21 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Post extends Model
+class Attachment extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $table = "posts";
+    protected $table = "attachments";
 
     protected $fillable = [
-        'created_by',
-        'title',
-        'content'
+        'message_id',
+        'filename',
+        'path',
+        'type'
     ];
 
     public $timestamps = true;
-
-    public function messages()
-    {
-        return $this->hasMany(Message::class);
-    }
 }
