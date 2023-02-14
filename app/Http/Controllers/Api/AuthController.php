@@ -43,6 +43,8 @@ class AuthController extends Controller
      * @param Request request The request object.
      *
      * @return The token is being returned.
+     * @bodyParam email string required Email of the user. Example: jose123@gmail.com
+     * @bodyParam password password required password of the user. Example: root
      */
     public function authenticate(Request $request)
     {
